@@ -1,0 +1,11 @@
+/* Body of the page with background image */
+body {
+	background-image: url('/res/media/background.jpg');
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+}
+

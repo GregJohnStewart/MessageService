@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en_us">
+<head>
+	<meta charset="UTF-8">
+	<title>Priority Messages</title>
+	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	<style>
+	</style>
+</head>
+<body class="min-vh-100 vstack">
+{#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
+	<div class="container-fluid min-vh-100 d-flex flex-column">
+		<main id="content">
+			<div class="row mb-3 mt-1">
+				<div class="col-6">
+					<h1 class="text-light align-middle">Messages</h1>
+				</div>
+				{#if userLoggedIn}
+					<div class="col-6 text-end">
+						<a href="/messageManage" class="btn btn-primary btn-sm">Manage Messages</a>
+					</div>
+				{/if}
+			</div>
+			<div id="message-table" class="table-container">
+				<table class="table table-striped table-hover opacity-75">
+					<thead>
+					<tr>
+						<th style="width:15%">Date</th>
+						<th style="width:15%">Priority</th>
+						<th>Subject</th>
+						<th>Action</th>
+					</tr>
+					</thead>
+					<tbody>
+					{#if priorityMessages.isEmpty}
+						<tr>
+							<td colspan="4" class="text-center">
+								No Messages to display!
+							</td>
+						</tr>
+					{#else}
+						{#for message in priorityMessages}
+							<tr id="message-row-{message.id}">
+								<td>
+									{message.showDateStart}
+								</td>
+								<td>
+									{message.priority}
+								</td>
+								<td>
+									{message.title}
+								</td>
+								<td>
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#message-modal-{message.id}">
+										View
+									</button>
+								</td>
+							</tr>
+						{/for}
+					{/if}
+					</tbody>
+				</table>
+			</div>
+		</main>
+	</div>
+	
+	{#for message in priorityMessages}
+		<div class="modal fade" id="message-modal-{message.id}" tabindex="-1" aria-labelledby="message-modal-{message.id}-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="message-modal-{message.id}-label">{message.title}</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p class="h3">Date: {message.showDateStart}</p>
+						<p class="h3">Priority: {message.priority}</p>
+						<hr/>
+						{message.content}
+					</div>
+				</div>
+			</div>
+		</div>
+	{/for}
+
+{/let}
+
+<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
+<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

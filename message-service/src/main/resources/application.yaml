@@ -1,0 +1,26 @@
+quarkus:
+  datasource:
+    db-kind: postgresql
+  hibernate-orm:
+    database:
+      generation: update
+  oidc:
+    client-id: messageViewer
+    application-type: web-app
+    logout:
+      path: /logout
+      post-logout-path: /
+  http:
+    auth:
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
+          
+"%dev":
+  quarkus:
+    log:
+      level: DEBUG
+    hibernate-orm:
+      database:
+        generation: drop-and-create

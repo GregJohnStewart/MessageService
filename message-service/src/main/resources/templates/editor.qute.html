@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en_us">
+<head>
+	<meta charset="UTF-8">
+	<title>Priority Messages - Editor</title>
+	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/res/lib/jsgrid/1.5.3/jsgrid.min.css">
+	<link rel="stylesheet" href="/res/lib/jsgrid/1.5.3/jsgrid-theme.min.css">
+	<link rel="stylesheet" href="/res/lib/jquery-ui/1.14.1/jquery-ui.theme.min.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	<style>
+	</style>
+</head>
+<body class="min-vh-100 vstack">
+<div class="container-fluid min-vh-100 d-flex flex-column">
+	<main id="content">
+		<div class="row">
+			<div class="col-6 d-flex justify-content-start">
+				<h1 class="text-light align-middle">Message Editor</h1>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col">
+				<div id="messagesGrid"></div>
+			</div>
+		</div>
+	</main>
+</div>
+
+<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
+<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="/res/lib/jquery-ui/1.14.1/jquery-ui.min.js"></script>
+<script src="/res/lib/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+<script>
+	// MyDateField is required to let date picker happen. http://js-grid.com/docs/#custom-field
+	let MyDateField = function(config) {
+		jsGrid.Field.call(this, config);
+	};
+	//let $j = jQuery.noConflict(); //https://stackoverflow.com/questions/1212696/jquery-ui-datepicker-datepicker-is-not-a-function
+	MyDateField.prototype = new jsGrid.Field({
+		
+		css: "date-field",            // redefine general property 'css'
+		align: "center",              // redefine general property 'align'
+		
+		myCustomProperty: "foo",      // custom property
+		
+		sorter: function(date1, date2) {
+			return new Date(date1) - new Date(date2);
+		},
+		
+		itemTemplate: function(value) {
+			return new Date(value).toDateString();
+		},
+		
+		insertTemplate: function(value) {
+			return this._insertPicker = $('<input type="date">').datepicker({ defaultDate: new Date() });
+		},
+		
+		editTemplate: function(value) {
+			return this._editPicker = $('<input type="date">').datepicker().datepicker("setDate", new Date(value));
+		},
+		
+		insertValue: function() {
+			return this._insertPicker.datepicker("getDate").toISOString();
+		},
+		
+		editValue: function() {
+			return this._editPicker.datepicker("getDate").toISOString();
+		}
+	});
+	
+	jsGrid.fields.date = MyDateField;
+	
+	
+	$("#messagesGrid").jsGrid({
+		height: "auto",
+		width: "100%",
+		
+		filtering: true,
+		editing: true,
+		inserting: true,
+		sorting: true,
+		paging: true,
+		autoload: true,
+		
+		controller: {
+			loadData: function () {
+				let d = $.Deferred();
+				
+				$.ajax({
+					type: "GET",
+					url: "/api/messages",
+					dataType: "json"
+				}).done(function (response) {
+					d.resolve(response);
+				});
+				
+				return d.promise();
+			},
+			
+			insertItem: function (customSite) {
+				return $.ajax({
+					type: "POST",
+					url: "/api/messages",
+					dataType: "json",
+					contentType: "application/json; charset=UTF-8",
+					data: JSON.stringify(customSite)
+				});
+			},
+			
+			updateItem: function (item) {
+				return $.ajax({
+					type: "PUT",
+					url: "/api/messages/" + item.id,
+					dataType: "json",
+					contentType: "application/json; charset=UTF-8",
+					data: JSON.stringify(item)
+				});
+			},
+			
+			deleteItem: function (item) {
+				return $.ajax({
+					type: "DELETE",
+					url: "/api/messages/" + item.id
+				});
+			}
+		},
+		
+		fields: [
+			{
+				name: "title",
+				title: "Title",
+				type: "text",
+				validate: "required"
+			},
+			{
+				name: "priority",
+				title: "Priority",
+				type: "number",
+				"defaultValue": 1,
+				validate: [
+					{ validator: "required" },
+					{ validator: "range", param: [1, 5] }
+				]
+			},
+			{
+				name: "showDateStart",
+				title: "Show Date",
+				type: "date"
+			},
+			{
+				name: "content",
+				type: "textarea",
+				width: 150
+			},
+			{
+				type: "control"
+			}
+		]
+	});
+</script>
+
+</body>
+</html>
