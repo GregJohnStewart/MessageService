@@ -1,6 +1,8 @@
 quarkus:
+  application:
+    name: message-service
   datasource:
-    db-kind: postgresql
+    db-kind: sqlite
   hibernate-orm:
     database:
       generation: update
@@ -16,11 +18,14 @@ quarkus:
         logout:
           paths: ${quarkus.oidc.logout.path}
           policy: authenticated
-          
+  container-image:
+    group: "dcgs"
 "%dev":
   quarkus:
     log:
       level: DEBUG
+    datasource:
+#      db-kind: postgresql/
     hibernate-orm:
       database:
         generation: drop-and-create
