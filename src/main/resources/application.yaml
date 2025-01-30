@@ -22,9 +22,13 @@ quarkus:
     group: "dcgs"
 "%dev":
   quarkus:
+    http:
+      port: 8081
     log:
       level: DEBUG
     datasource:
+      jdbc:
+        url: "jdbc:sqlite::memory:"
 #      db-kind: postgresql/
     hibernate-orm:
       database:
