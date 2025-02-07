@@ -2,7 +2,7 @@ quarkus:
   application:
     name: message-service
   datasource:
-    db-kind: sqlite
+    db-kind: postgresql
   hibernate-orm:
     database:
       generation: update
@@ -26,10 +26,6 @@ quarkus:
       port: 8081
     log:
       level: DEBUG
-    datasource:
-      jdbc:
-        url: "jdbc:sqlite::memory:"
-#      db-kind: postgresql/
     hibernate-orm:
       database:
         generation: drop-and-create
