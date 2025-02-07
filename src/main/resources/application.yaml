@@ -33,3 +33,9 @@ quarkus:
     hibernate-orm:
       database:
         generation: drop-and-create
+    oidc:
+      # Get this from config debug output from Azide
+      auth-server-url: http://localhost:8085/realms/quarkus
+      client-id: azide
+      credentials:
+        secret: "secret"
