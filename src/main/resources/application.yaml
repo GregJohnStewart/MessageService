@@ -23,7 +23,7 @@ quarkus:
 "%dev":
   quarkus:
     http:
-      port: 8081
+      port: 8082
     log:
       level: DEBUG
     datasource:
@@ -33,9 +33,17 @@ quarkus:
     hibernate-orm:
       database:
         generation: drop-and-create
+  #
+  #
+  # Tweak for connecting to message app oidc
+  # Normally not necessary for regular dev flow.
+  #
+  #
     oidc:
       # Get this from config debug output from Azide
       auth-server-url: http://localhost:8085/realms/quarkus
       client-id: azide
       credentials:
-        secret: "secret"
+        secret: secret
+      
+      
