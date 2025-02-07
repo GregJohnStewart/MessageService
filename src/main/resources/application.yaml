@@ -23,7 +23,7 @@ quarkus:
 "%dev":
   quarkus:
     http:
-      port: 8082
+      port: 8081
     log:
       level: DEBUG
     datasource:
