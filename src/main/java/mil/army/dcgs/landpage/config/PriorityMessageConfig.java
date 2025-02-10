@@ -1,11 +1,9 @@
-package mil.army.dcgs.messageService.config;
+package mil.army.dcgs.landpage.config;
 
 import io.smallrye.config.ConfigMapping;
-import io.smallrye.config.WithDefault;
-
 import java.time.LocalDateTime;
+
 import java.util.List;
-import java.util.Optional;
 
 @ConfigMapping(prefix = "priorityMessages", namingStrategy = ConfigMapping.NamingStrategy.VERBATIM)
 public interface PriorityMessageConfig {
@@ -13,10 +11,13 @@ public interface PriorityMessageConfig {
     List<Message> messages();
 
     interface Message {
-        String title();
-        @WithDefault("1")
+        String subject();
         int priority();
         String content();
-        Optional<LocalDateTime> showStartDate();
+        String postingUser();
+        LocalDateTime startDate();
+        LocalDateTime endDate();
+        LocalDateTime createdAt();
+        LocalDateTime lastUpdated();
     }
 }

@@ -1,4 +1,4 @@
-package mil.army.dcgs.messageService.interfaces.rest;
+package mil.army.dcgs.landpage.interfaces.rest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.security.Authenticated;
@@ -10,18 +10,22 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import mil.army.dcgs.messageService.database.PriorityMessage;
-import mil.army.dcgs.messageService.database.PriorityMessageRepository;
-import mil.army.dcgs.messageService.interfaces.RestInterface;
+import mil.army.dcgs.landpage.database.PriorityMessage;
+import mil.army.dcgs.landpage.database.PriorityMessageRepository;
+import mil.army.dcgs.landpage.interfaces.RestInterface;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 @RequestScoped
-@Path("/api/messages")
+@Path("/api/landpage")
 @Authenticated //TODO:: use Roles
 public class PriorityMessageEndpoints extends RestInterface {
+
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Getter
     @Inject
@@ -44,10 +48,13 @@ public class PriorityMessageEndpoints extends RestInterface {
         PriorityMessage newMessage;
 
         newMessage = PriorityMessage.builder()
-            .title(priorityMessageJson.get("title").asText())
+            .subject(priorityMessageJson.get("subject").asText())
             .priority(priorityMessageJson.get("priority").asInt())
             .content(priorityMessageJson.get("content").asText())
-                         .postingUser(this.getUserId())
+            .postingUser(this.getUserId())
+            .startDate(LocalDateTime.parse(priorityMessageJson.get("startDate").asText(), dateFormatter))
+            .endDate(LocalDateTime.parse(priorityMessageJson.get("endDate").asText(), dateFormatter))
+            .lastUpdated(LocalDateTime.now())
             .build();
 
         log.debug("New priority message (pre persist): {}", newMessage);
@@ -64,17 +71,20 @@ public class PriorityMessageEndpoints extends RestInterface {
     @Transactional
     public @NotNull PriorityMessage updateMessage(
         @NotNull @PathParam("id") UUID id,
-        ObjectNode newPriorityMessageJson) {
+        ObjectNode priorityMessageJson) {
 
-        log.info("Updating a priority message: {}", newPriorityMessageJson);
+        log.info("Updating a priority message: {}", priorityMessageJson);
 
         PriorityMessage message = this.priorityMessageRepository.find("id", id).firstResultOptional()
             .orElseThrow(NotFoundException::new);
 
-        message.setTitle(newPriorityMessageJson.get("title").asText());
-        message.setPriority(newPriorityMessageJson.get("priority").asInt());
-//        message.setDate(newPriorityMessageJson.get("date").asText());
-        message.setContent(newPriorityMessageJson.get("content").asText());
+        message.setSubject(priorityMessageJson.get("subject").asText());
+        message.setPriority(priorityMessageJson.get("priority").asInt());
+        message.setContent(priorityMessageJson.get("content").asText());
+        message.setPostingUser(this.getUserId());
+        message.setStartDate(LocalDateTime.parse(priorityMessageJson.get("startDate").asText(), dateFormatter));
+        message.setEndDate(LocalDateTime.parse(priorityMessageJson.get("endDate").asText(), dateFormatter));
+        message.setLastUpdated(LocalDateTime.now());
         message.persist();
 
         return message;

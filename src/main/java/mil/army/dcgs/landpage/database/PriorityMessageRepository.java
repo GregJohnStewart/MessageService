@@ -1,13 +1,12 @@
-package mil.army.dcgs.messageService.database;
+package mil.army.dcgs.landpage.database;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
-import mil.army.dcgs.messageService.config.PriorityMessageConfig;
+import mil.army.dcgs.landpage.config.PriorityMessageConfig;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -18,20 +17,19 @@ public class PriorityMessageRepository implements PanacheRepository<PriorityMess
     @Inject
     PriorityMessageConfig priorityMessageConfig;
     
-
     public void populate() {
         for(PriorityMessageConfig.Message curMessageConfig : this.priorityMessageConfig.messages()){
             PriorityMessage priorityMessage = PriorityMessage.builder()
-                                                  .title(curMessageConfig.title())
+                                                  .subject(curMessageConfig.subject())
                                                   .priority(curMessageConfig.priority())
                                                   .content(curMessageConfig.content())
-                                                  .showDateStart(
-                                                      curMessageConfig.showStartDate().orElse(LocalDateTime.now())
-                                                  )
-                                                  .postingUser("config")
+                                                  .postingUser(curMessageConfig.postingUser())
+                                                  .startDate(curMessageConfig.startDate())
+                                                  .endDate(curMessageConfig.endDate())
+                                                  .lastUpdated(curMessageConfig.lastUpdated())
                                                   .build();
             
-            if(this.find("title", priorityMessage.getTitle()).count() > 0){
+            if(this.find("subject", priorityMessage.getSubject()).count() > 0){
                 log.info("Message already exists: {}", priorityMessage);
                 continue;
             }
@@ -42,7 +40,7 @@ public class PriorityMessageRepository implements PanacheRepository<PriorityMess
     }
     
     public List<PriorityMessage> getMessagesToDisplay(){
-        //TODO: filter based on dates
+        //TODO: filter/order based on dates
         return this.findAll().stream().toList();
     }
 }

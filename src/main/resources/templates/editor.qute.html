@@ -2,7 +2,7 @@
 <html lang="en_us">
 <head>
 	<meta charset="UTF-8">
-	<title>Priority Messages - Editor</title>
+	<title>Azide Splash - Editor</title>
 	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/res/lib/jsgrid/1.5.3/jsgrid.min.css">
@@ -17,10 +17,10 @@
 	<main id="content">
 		<div class="row">
 			<div class="col-6 justify-content-start">
-				<h1 class="text-light align-middle">Message Editor</h1>
+				<h1 class="text-light align-middle">Splash Data Editor</h1>
 			</div>
 			<div class="col-6 text-end">
-				<a href="/" class="btn btn-primary btn-sm">View Messages</a>
+				<a href="/" class="btn btn-primary btn-sm">Exit Editor</a>
 			</div>
 		</div>
 		
@@ -95,7 +95,7 @@
 				
 				$.ajax({
 					type: "GET",
-					url: "/api/messages",
+					url: "/api/landpage",
 					dataType: "json"
 				}).done(function (response) {
 					d.resolve(response);
@@ -107,7 +107,7 @@
 			insertItem: function (customSite) {
 				return $.ajax({
 					type: "POST",
-					url: "/api/messages",
+					url: "/api/landpage",
 					dataType: "json",
 					contentType: "application/json; charset=UTF-8",
 					data: JSON.stringify(customSite)
@@ -117,7 +117,7 @@
 			updateItem: function (item) {
 				return $.ajax({
 					type: "PUT",
-					url: "/api/messages/" + item.id,
+					url: "/api/landpage/" + item.id,
 					dataType: "json",
 					contentType: "application/json; charset=UTF-8",
 					data: JSON.stringify(item)
@@ -127,15 +127,15 @@
 			deleteItem: function (item) {
 				return $.ajax({
 					type: "DELETE",
-					url: "/api/messages/" + item.id
+					url: "/api/landpage/" + item.id
 				});
 			}
 		},
 		
 		fields: [
 			{
-				name: "title",
-				title: "Title",
+				name: "subject",
+				title: "Subject",
 				type: "text",
 				validate: "required"
 			},
@@ -150,8 +150,13 @@
 				]
 			},
 			{
-				name: "showDateStart",
-				title: "Show Date",
+				name: "startDate",
+				title: "Start Date",
+				type: "date"
+			},
+			{
+				name: "endDate",
+				title: "End Date",
 				type: "date"
 			},
 			{

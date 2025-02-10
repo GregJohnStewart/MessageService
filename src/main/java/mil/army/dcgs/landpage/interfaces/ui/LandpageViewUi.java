@@ -1,10 +1,10 @@
-package mil.army.dcgs.messageService.interfaces.ui;
+package mil.army.dcgs.landpage.interfaces.ui;
 
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
-import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
@@ -14,18 +14,19 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
 
 @RequestScoped
-@Path("/messageManage")
-@Authenticated //TODO:: change to role
-public class MessageEditUi extends UiEndpoint {
+@Path("/landpage")
+@PermitAll
+public class LandpageViewUi extends UiEndpoint {
 	
 	@Getter
-	@Location("editor")
+	@Location("viewer")
 	Template pageTemplate;
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
 	public TemplateInstance get() {
-		return this.getDefaultPageSetup();
+		return this.getDefaultPageSetup()
+				   .data("userLoggedIn", this.getAccessToken().getRawToken() != null);
 	}
 }

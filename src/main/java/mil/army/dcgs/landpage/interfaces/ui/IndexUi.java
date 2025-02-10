@@ -1,9 +1,6 @@
-package mil.army.dcgs.messageService.interfaces.ui;
+package mil.army.dcgs.landpage.interfaces.ui;
 
 
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.transaction.Transactional;
@@ -12,8 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import lombok.Getter;
-import mil.army.dcgs.messageService.interfaces.RestInterface;
+import mil.army.dcgs.landpage.interfaces.RestInterface;
 
 import java.net.URI;
 
@@ -26,7 +22,7 @@ public class IndexUi extends RestInterface {
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
 	public Response get() {
-		return Response.seeOther(URI.create("/messages"))
+		return Response.seeOther(URI.create("/landpage"))
 				   .build();
 	}
 }

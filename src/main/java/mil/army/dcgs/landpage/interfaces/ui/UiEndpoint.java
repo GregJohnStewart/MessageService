@@ -1,9 +1,9 @@
-package mil.army.dcgs.messageService.interfaces.ui;
+package mil.army.dcgs.landpage.interfaces.ui;
 
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import lombok.extern.slf4j.Slf4j;
-import mil.army.dcgs.messageService.interfaces.RestInterface;
+import mil.army.dcgs.landpage.interfaces.RestInterface;
 
 @Slf4j
 public abstract class UiEndpoint extends RestInterface {

@@ -1,4 +1,13 @@
-# message-service
+# Azide Splash Page
+
+This app will be shown when Azide first loads and can be pulled up once logged in.
+The purpose of the app is to provide the operators with some useful information as needed.
+This information will include but is not limited to:
+  Times (based on configured timezones)
+  Priority Messages (Admins can post important/useful messages for operators)
+  ????
+
+# Quarkus Info
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 

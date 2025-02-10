@@ -1,4 +1,4 @@
-package mil.army.dcgs.messageService.interfaces;
+package mil.army.dcgs.landpage.interfaces;
 
 
 import jakarta.inject.Inject;
