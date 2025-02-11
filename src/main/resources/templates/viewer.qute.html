@@ -28,10 +28,10 @@
 					<thead>
 					<tr>
 						<th>Subject</th>
-						<th style="width:15%">Priority</th>
-						<th style="width:15%">Start Date</th>
-						<th style="width:15%">End Date</th>
-						<th style="width:15%">Action</th>
+						<th style="width:10%">Priority</th>
+						<th style="width:10%">Start Date</th>
+						<th style="width:10%">End Date</th>
+						<th style="width:10%">Action</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -51,10 +51,10 @@
 									{message.priority}
 								</td>
 								<td>
-									{message.startDate}
+									{message.getFormattedStartDate()}
 								</td>
 								<td>
-									{message.endDate}
+									{message.getFormattedEndDate()}
 								</td>
 								<td>
 									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#message-modal-{message.id}">
@@ -79,11 +79,14 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<p class="h3">Start Date: {message.startDate}</p>
-						<p class="h3">End Date: {message.endDate}</p>
-						<p class="h3">Priority: {message.priority}</p>
-						<hr/>
 						{message.content}
+						<hr/>
+						<p class="h5">Start Date: {message.getFormattedStartDate()}</p>
+						<p class="h5">End Date: {message.getFormattedEndDate()}</p>
+						<p class="h5">Priority: {message.priority}</p>
+						<p class="h5">Last Updated By: {message.postingUser}</p>
+						<p class="h5">Last Updated: {message.getFormattedLastUpdated()}</p>
+						<p class="h5">Created At: {message.getFormattedCreatedAt()}</p>
 					</div>
 				</div>
 			</div>

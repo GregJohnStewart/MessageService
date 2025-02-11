@@ -14,6 +14,7 @@ import mil.army.dcgs.landpage.database.PriorityMessage;
 import mil.army.dcgs.landpage.database.PriorityMessageRepository;
 import mil.army.dcgs.landpage.interfaces.RestInterface;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -47,13 +48,28 @@ public class PriorityMessageEndpoints extends RestInterface {
     public @NotNull PriorityMessage createMessage(ObjectNode priorityMessageJson) {
         PriorityMessage newMessage;
 
+        LocalDateTime parsedStartDate = LocalDateTime.now();
+        LocalDateTime parsedEndDate = LocalDateTime.now();
+        try {
+            String dateString;
+            dateString = priorityMessageJson.get("startDate").asText();
+            log.debug("Parsing start date: " + dateString);
+            parsedStartDate = LocalDate.parse(dateString, dateFormatter).atStartOfDay();
+
+            dateString = priorityMessageJson.get("endDate").asText();
+            log.debug("Parsing end date: " + dateString);
+            parsedEndDate = LocalDate.parse(dateString, dateFormatter).atStartOfDay();
+        } catch(Exception ex) {
+            log.debug("Failed to parse the startDate/endDate: " + ex.getMessage());
+        }
+
         newMessage = PriorityMessage.builder()
             .subject(priorityMessageJson.get("subject").asText())
             .priority(priorityMessageJson.get("priority").asInt())
             .content(priorityMessageJson.get("content").asText())
             .postingUser(this.getUserId())
-            .startDate(LocalDateTime.parse(priorityMessageJson.get("startDate").asText(), dateFormatter))
-            .endDate(LocalDateTime.parse(priorityMessageJson.get("endDate").asText(), dateFormatter))
+            .startDate(parsedStartDate)
+            .endDate(parsedEndDate)
             .lastUpdated(LocalDateTime.now())
             .build();
 
@@ -78,12 +94,27 @@ public class PriorityMessageEndpoints extends RestInterface {
         PriorityMessage message = this.priorityMessageRepository.find("id", id).firstResultOptional()
             .orElseThrow(NotFoundException::new);
 
+        LocalDateTime parsedStartDate = LocalDateTime.now();
+        LocalDateTime parsedEndDate = LocalDateTime.now();
+        try {
+            String dateString;
+            dateString = priorityMessageJson.get("startDate").asText();
+            log.debug("Parsing start date: " + dateString);
+            parsedStartDate = LocalDate.parse(dateString, dateFormatter).atStartOfDay();
+
+            dateString = priorityMessageJson.get("endDate").asText();
+            log.debug("Parsing end date: " + dateString);
+            parsedEndDate = LocalDate.parse(dateString, dateFormatter).atStartOfDay();
+        } catch(Exception ex) {
+            log.debug("Failed to parse the startDate/endDate: " + ex.getMessage());
+        }
+
         message.setSubject(priorityMessageJson.get("subject").asText());
         message.setPriority(priorityMessageJson.get("priority").asInt());
         message.setContent(priorityMessageJson.get("content").asText());
         message.setPostingUser(this.getUserId());
-        message.setStartDate(LocalDateTime.parse(priorityMessageJson.get("startDate").asText(), dateFormatter));
-        message.setEndDate(LocalDateTime.parse(priorityMessageJson.get("endDate").asText(), dateFormatter));
+        message.setStartDate(parsedStartDate);
+        message.setEndDate(parsedEndDate);
         message.setLastUpdated(LocalDateTime.now());
         message.persist();
 
