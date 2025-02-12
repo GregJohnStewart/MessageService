@@ -234,7 +234,7 @@
 				
 				$.ajax({
 					type: "GET",
-					url: "/api/landpage",
+					url: "/api/landpage/message",
 					dataType: "json"
 				}).done(function (response) {
 					d.resolve(response);
@@ -247,7 +247,7 @@
 				alert(JSON.stringify(message));
 				return $.ajax({
 					type: "POST",
-					url: "/api/landpage",
+					url: "/api/landpage/message",
 					dataType: "json",
 					contentType: "application/json; charset=UTF-8",
 					data: JSON.stringify(message)
@@ -258,7 +258,7 @@
 				alert(JSON.stringify(message));
 				return $.ajax({
 					type: "PUT",
-					url: "/api/landpage/" + message.id,
+					url: "/api/landpage/message/" + message.id,
 					dataType: "json",
 					contentType: "application/json; charset=UTF-8",
 					data: JSON.stringify(message)
@@ -268,7 +268,7 @@
 			deleteItem: function (message) {
 				return $.ajax({
 					type: "DELETE",
-					url: "/api/landpage/" + message.id
+					url: "/api/landpage/message/" + message.id
 				});
 			}
 		},

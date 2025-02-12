@@ -23,9 +23,10 @@ public class PriorityMessageRepository implements PanacheRepository<PriorityMess
                                                   .subject(curMessageConfig.subject())
                                                   .priority(curMessageConfig.priority())
                                                   .content(curMessageConfig.content())
-                                                  .postingUser(curMessageConfig.postingUser())
                                                   .startDate(curMessageConfig.startDate())
                                                   .endDate(curMessageConfig.endDate())
+                                                  .createdBy(curMessageConfig.createdBy())
+                                                  .lastUpdatedBy(curMessageConfig.lastUpdatedBy())
                                                   .lastUpdated(curMessageConfig.lastUpdated())
                                                   .build();
             

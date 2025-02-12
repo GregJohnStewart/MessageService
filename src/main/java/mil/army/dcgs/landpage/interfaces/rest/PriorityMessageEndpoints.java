@@ -33,6 +33,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     PriorityMessageRepository priorityMessageRepository;
 
     @GET
+    @Path("/message")
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public @NotNull List<PriorityMessage> getAllMessages() {
@@ -42,6 +43,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     }
 
     @POST
+    @Path("/message")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
@@ -67,9 +69,10 @@ public class PriorityMessageEndpoints extends RestInterface {
             .subject(priorityMessageJson.get("subject").asText())
             .priority(priorityMessageJson.get("priority").asInt())
             .content(priorityMessageJson.get("content").asText())
-            .postingUser(this.getUserId())
             .startDate(parsedStartDate)
             .endDate(parsedEndDate)
+            .createdBy(this.getUserId())
+            .lastUpdatedBy(this.getUserId())
             .lastUpdated(LocalDateTime.now())
             .build();
 
@@ -81,7 +84,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/message/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
@@ -112,9 +115,9 @@ public class PriorityMessageEndpoints extends RestInterface {
         message.setSubject(priorityMessageJson.get("subject").asText());
         message.setPriority(priorityMessageJson.get("priority").asInt());
         message.setContent(priorityMessageJson.get("content").asText());
-        message.setPostingUser(this.getUserId());
         message.setStartDate(parsedStartDate);
         message.setEndDate(parsedEndDate);
+        message.setLastUpdatedBy(this.getUserId());
         message.setLastUpdated(LocalDateTime.now());
         message.persist();
 
@@ -122,7 +125,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/message/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional

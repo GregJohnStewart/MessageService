@@ -14,10 +14,11 @@ public interface PriorityMessageConfig {
         String subject();
         int priority();
         String content();
-        String postingUser();
         LocalDateTime startDate();
         LocalDateTime endDate();
+        String createdBy();
         LocalDateTime createdAt();
+        String lastUpdatedBy();
         LocalDateTime lastUpdated();
     }
 }

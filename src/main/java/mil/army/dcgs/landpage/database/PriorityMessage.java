@@ -38,10 +38,6 @@ public class PriorityMessage extends PanacheEntityBase {
     @Basic(optional=false)
     public String content;
     
-    @NotNull
-    @Basic(optional=false)
-    public String postingUser;
-    
     @Builder.Default
     @NotNull
     @Basic(optional=false)
@@ -52,10 +48,18 @@ public class PriorityMessage extends PanacheEntityBase {
     @Basic(optional=false)
     public LocalDateTime endDate = LocalDateTime.now();
     
+    @NotNull
+    @Basic(optional=false)
+    public String createdBy;
+    
     @Builder.Default
     @NotNull
     @Basic(optional=false)
     public LocalDateTime createdAt = LocalDateTime.now();
+    
+    @NotNull
+    @Basic(optional=false)
+    public String lastUpdatedBy;
     
     @Builder.Default
     @NotNull
