@@ -37,7 +37,7 @@
 					<tbody>
 					{#if priorityMessages.isEmpty}
 						<tr>
-							<td colspan="4" class="text-center">
+							<td colspan="5" class="text-center">
 								No Messages to display!
 							</td>
 						</tr>
@@ -84,7 +84,7 @@
 						<p class="h5">Start Date: {message.getFormattedStartDate()}</p>
 						<p class="h5">End Date: {message.getFormattedEndDate()}</p>
 						<p class="h5">Priority: {message.priority}</p>
-						<p class="h5">Last Updated By: {message.postingUser}</p>
+						<p class="h5">Last Updated By: {message.lastUpdatedBy}</p>
 						<p class="h5">Last Updated: {message.getFormattedLastUpdated()}</p>
 						<p class="h5">Created At: {message.getFormattedCreatedAt()}</p>
 					</div>
