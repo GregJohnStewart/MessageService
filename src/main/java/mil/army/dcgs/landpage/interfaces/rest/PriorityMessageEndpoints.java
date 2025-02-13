@@ -20,6 +20,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import io.quarkus.qute.TemplateInstance;
+import io.quarkus.qute.Template;
+
 @Slf4j
 @RequestScoped
 @Path("/api/landpage")
@@ -31,6 +34,9 @@ public class PriorityMessageEndpoints extends RestInterface {
     @Getter
     @Inject
     PriorityMessageRepository priorityMessageRepository;
+
+    @Inject
+    Template messagestablefragment; // Injects the Qute template named "messages-table-fragment.html"
 
     @GET
     @Path("/message")
@@ -138,5 +144,13 @@ public class PriorityMessageEndpoints extends RestInterface {
         this.priorityMessageRepository.delete(message);
 
         return message;
+    }
+
+    @GET
+    @Path("/messages-table")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getMessagesTable() {
+         List<PriorityMessage> messages = priorityMessageRepository.listAll();
+         return messagestablefragment.data("messages", messages);
     }
 }

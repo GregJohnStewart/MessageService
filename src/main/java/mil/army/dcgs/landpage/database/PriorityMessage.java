@@ -3,12 +3,19 @@ package mil.army.dcgs.landpage.database;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Getter
 @Setter
@@ -27,6 +34,8 @@ public class PriorityMessage extends PanacheEntityBase {
 
     @NotNull
     @Basic(optional=false)
+    @Size(max=255)
+    @Column(length=255)
     public String subject;
 
     @Builder.Default
@@ -36,16 +45,20 @@ public class PriorityMessage extends PanacheEntityBase {
     
     @NotNull
     @Basic(optional=false)
+    @Size(max=1024)
+    @Column(length=1024)
     public String content;
     
     @Builder.Default
     @NotNull
     @Basic(optional=false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public LocalDateTime startDate = LocalDateTime.now();
     
     @Builder.Default
     @NotNull
     @Basic(optional=false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public LocalDateTime endDate = LocalDateTime.now();
     
     @NotNull
@@ -55,6 +68,7 @@ public class PriorityMessage extends PanacheEntityBase {
     @Builder.Default
     @NotNull
     @Basic(optional=false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:MM:SS")
     public LocalDateTime createdAt = LocalDateTime.now();
     
     @NotNull
@@ -64,6 +78,7 @@ public class PriorityMessage extends PanacheEntityBase {
     @Builder.Default
     @NotNull
     @Basic(optional=false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:MM:SS")
     public LocalDateTime lastUpdated = LocalDateTime.now();
 
     /**
@@ -99,19 +114,16 @@ public class PriorityMessage extends PanacheEntityBase {
      * @return JSON formatted message
      */
     public String toJSON() {
-        String json = "{";
-        json += "\"id\":\"" + id + "\",";
-        json += "\"subject\":\"" + subject + "\",";
-        json += "\"priority\":\"" + priority + "\",";
-        json += "\"startDate\":\"" + getFormattedStartDate() + "\",";
-        json += "\"endDate\":\"" + getFormattedEndDate() + "\",";
-        json += "\"createdBy\":\"" + createdBy + "\",";
-        json += "\"createdAt\":\"" + getFormattedCreatedAt() + "\",";
-        json += "\"lastUpdatedBy\":\"" + lastUpdatedBy + "\",";
-        json += "\"lastUpdated\":\"" + getFormattedLastUpdated() + "\",";
-        json += "\"content\":\"" + content + "\"";
-        json += "}";
-
-        return json;
+        ObjectMapper mapper = new ObjectMapper();
+        // Register the JavaTimeModule to properly handle LocalDateTime serialization
+        mapper.registerModule(new JavaTimeModule());
+        // Disable serialization of dates as timestamps for a more human-readable format
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting PriorityMessage to JSON", e);
+        }
     }
 }

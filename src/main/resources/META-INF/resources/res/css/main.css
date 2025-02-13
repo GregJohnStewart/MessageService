@@ -9,3 +9,16 @@ body {
 	padding: 0;
 }
 
+.modal-dialog {
+	max-width: 50vw;
+	max-height: 80vh;
+	margin: auto; /* Centers the modal horizontally */
+}
+
+.modal-body {
+	max-height: 75vh;
+	overflow-y: auto;
+}
+
+.is-invalid { border-color: #dc3545; }
+.invalid-feedback { display: block; }

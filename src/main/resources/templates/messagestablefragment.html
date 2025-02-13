@@ -1,0 +1,18 @@
+{#if messages.isEmpty}
+    <tr>
+        <td colspan="4" class="text-center">No Messages to edit!</td>
+    </tr>
+{#else}
+    {#for message in messages}
+        <tr id="message-row-{message.id}" 
+            data-bs-toggle="modal" 
+            data-bs-target="#editModal" 
+            data-message-data="{message.toJSON()}" 
+            onclick="showDetails('update', '{message.id}')">
+            <td>{message.subject}</td>
+            <td>{message.priority}</td>
+            <td>{message.getFormattedStartDate()}</td>
+            <td>{message.getFormattedEndDate()}</td>
+        </tr>
+    {/for}
+{/if}

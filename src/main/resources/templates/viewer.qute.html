@@ -31,7 +31,6 @@
 						<th style="width:10%">Priority</th>
 						<th style="width:10%">Start Date</th>
 						<th style="width:10%">End Date</th>
-<!--						<th style="width:10%">Action</th> -->
 					</tr>
 					</thead>
 					<tbody>
@@ -43,7 +42,7 @@
 						</tr>
 					{#else}
 						{#for message in priorityMessages}
-							<tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="showDetails('{message.toJSON()}')">
+							<tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#infoModal" data-message-data="{message.toJSON()}" onclick="showDetails('{message.id}')">
 								<td>
 									{message.subject}
 								</td>
@@ -56,13 +55,6 @@
 								<td>
 									{message.getFormattedEndDate()}
 								</td>
-								<!--
-								<td>
-									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#message-modal-{message.id}">
-										View
-									</button>
-								</td>
-								-->
 							</tr>
 						{/for}
 					{/if}
@@ -80,77 +72,64 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Subject:</strong> <span id="subject"></span></p>
-                    <p><strong>Message:</strong> <span id="message"></span></p>
-                    <p><strong>Priority:</strong> <span id="priority"></span></p>
-                    <p><strong>Start Date:</strong> <span id="startDate"></span></p>
-                    <p><strong>End Date:</strong> <span id="endDate"></span></p>
-                    <p><strong>Last Updated By:</strong> <span id="lastUpdatedBy"></span></p>
-                    <p><strong>Last Updated:</strong> <span id="lastUpdated"></span></p>
-                    <p><strong>Created By:</strong> <span id="createdBy"></span></p>
-                    <p><strong>Created At:</strong> <span id="createdAt"></span></p>
-                </div>
+					<dl class="row">
+						<dt class="col-sm-3">Subject:</dt>
+						<dd class="col-sm-9" id="subject"></dd>
+						<dt class="col-sm-3">Message:</dt>
+						<dd class="col-sm-9" id="message"></dd>
+						<dt class="col-sm-3">Priority:</dt>
+						<dd class="col-sm-9" id="priority"></dd>
+						<dt class="col-sm-3">Start Date:</dt>
+						<dd class="col-sm-9" id="startDate"></dd>
+						<dt class="col-sm-3">End Date:</dt>
+						<dd class="col-sm-9" id="endDate"></dd>
+						<dt class="col-sm-3">Last Updated By:</dt>
+						<dd class="col-sm-9" id="lastUpdatedBy"></dd>
+						<dt class="col-sm-3">Last Updated:</dt>
+						<dd class="col-sm-9" id="lastUpdated"></dd>
+						<dt class="col-sm-3">Created By:</dt>
+						<dd class="col-sm-9" id="createdBy"></dd>
+						<dt class="col-sm-3">Created At:</dt>
+						<dd class="col-sm-9" id="createdAt"></dd>
+					  </dl>
+				</div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
-<!--	
-	{#for message in priorityMessages}
-		<div class="modal fade" id="message-modal-{message.id}" tabindex="-1" aria-labelledby="message-modal-{message.id}-label" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h1 class="modal-title fs-5" id="message-modal-{message.id}-label">{message.subject}</h1>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						{message.content}
-						<hr/>
-						<p class="h5">Start Date: {message.getFormattedStartDate()}</p>
-						<p class="h5">End Date: {message.getFormattedEndDate()}</p>
-						<p class="h5">Priority: {message.priority}</p>
-						<p class="h5">Last Updated By: {message.lastUpdatedBy}</p>
-						<p class="h5">Last Updated: {message.getFormattedLastUpdated()}</p>
-						<p class="h5">Created By: {message.createdBy}</p>
-						<p class="h5">Created At: {message.getFormattedCreatedAt()}</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	{/for}
-
-{/let}
-	-->
-<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
-<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-<script>
-	function stripQuotes(str) {
-		if (str.startsWith('"') || str.startsWith("'")) {
-			str = str.slice(1);
+	<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
+	<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+	<script>
+		function stripQuotes(str) {
+			if (str.startsWith('"') || str.startsWith("'")) {
+				str = str.slice(1);
+			}
+			if (str.endsWith('"') || str.endsWith("'")) {
+				str = str.slice(0, -1);
+			}
+			return str;
 		}
-		if (str.endsWith('"') || str.endsWith("'")) {
-			str = str.slice(0, -1);
+
+		function showDetails(messageId) {
+			jsonmessage = document.getElementById('message-row-' + messageId).dataset.messageData;
+
+			console.log("View JSON Message: " + jsonmessage);
+
+			message = JSON.parse(stripQuotes(jsonmessage));
+
+			document.getElementById('subject').innerText = message.subject;
+			document.getElementById('message').innerText = message.content;
+			document.getElementById('priority').innerText = message.priority;
+			document.getElementById('startDate').innerText = message.startDate;
+			document.getElementById('endDate').innerText = message.endDate;
+			document.getElementById('lastUpdatedBy').innerText = message.lastUpdatedBy;
+			document.getElementById('lastUpdated').innerText = message.lastUpdated;
+			document.getElementById('createdBy').innerText = message.createdBy;
+			document.getElementById('createdAt').innerText = message.createdAt;
 		}
-		return str;
-	}
-
-    function showDetails(jsonmessage) {
-		message = JSON.parse(stripQuotes(jsonmessage));
-
-		document.getElementById('subject').innerText = message.subject;
-		document.getElementById('message').innerText = message.content;
-		document.getElementById('priority').innerText = message.priority;
-		document.getElementById('startDate').innerText = message.startDate;
-		document.getElementById('endDate').innerText = message.endDate;
-		document.getElementById('lastUpdatedBy').innerText = message.lastUpdatedBy;
-		document.getElementById('lastUpdated').innerText = message.lastUpdated;
-		document.getElementById('createdBy').innerText = message.createdBy;
-		document.getElementById('createdAt').innerText = message.createdAt;
-    }
-</script>
+	</script>
 
 </body>
 </html>
