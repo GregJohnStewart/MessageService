@@ -2,7 +2,7 @@
 <html lang="en_us">
 <head>
 	<meta charset="UTF-8">
-	<title>Azide Splash - Viewer</title>
+	<title>Landing Page - Viewer</title>
 	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/res/css/main.css">
@@ -31,19 +31,19 @@
 						<th style="width:10%">Priority</th>
 						<th style="width:10%">Start Date</th>
 						<th style="width:10%">End Date</th>
-						<th style="width:10%">Action</th>
+<!--						<th style="width:10%">Action</th> -->
 					</tr>
 					</thead>
 					<tbody>
 					{#if priorityMessages.isEmpty}
 						<tr>
-							<td colspan="5" class="text-center">
+							<td colspan="4" class="text-center">
 								No Messages to display!
 							</td>
 						</tr>
 					{#else}
 						{#for message in priorityMessages}
-							<tr id="message-row-{message.id}">
+							<tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="showDetails('{message.toJSON()}')">
 								<td>
 									{message.subject}
 								</td>
@@ -56,11 +56,13 @@
 								<td>
 									{message.getFormattedEndDate()}
 								</td>
+								<!--
 								<td>
 									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#message-modal-{message.id}">
 										View
 									</button>
 								</td>
+								-->
 							</tr>
 						{/for}
 					{/if}
@@ -69,7 +71,33 @@
 			</div>
 		</main>
 	</div>
-	
+
+	<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Message Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Subject:</strong> <span id="subject"></span></p>
+                    <p><strong>Message:</strong> <span id="message"></span></p>
+                    <p><strong>Priority:</strong> <span id="priority"></span></p>
+                    <p><strong>Start Date:</strong> <span id="startDate"></span></p>
+                    <p><strong>End Date:</strong> <span id="endDate"></span></p>
+                    <p><strong>Last Updated By:</strong> <span id="lastUpdatedBy"></span></p>
+                    <p><strong>Last Updated:</strong> <span id="lastUpdated"></span></p>
+                    <p><strong>Created By:</strong> <span id="createdBy"></span></p>
+                    <p><strong>Created At:</strong> <span id="createdAt"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--	
 	{#for message in priorityMessages}
 		<div class="modal fade" id="message-modal-{message.id}" tabindex="-1" aria-labelledby="message-modal-{message.id}-label" aria-hidden="true">
 			<div class="modal-dialog">
@@ -86,6 +114,7 @@
 						<p class="h5">Priority: {message.priority}</p>
 						<p class="h5">Last Updated By: {message.lastUpdatedBy}</p>
 						<p class="h5">Last Updated: {message.getFormattedLastUpdated()}</p>
+						<p class="h5">Created By: {message.createdBy}</p>
 						<p class="h5">Created At: {message.getFormattedCreatedAt()}</p>
 					</div>
 				</div>
@@ -94,9 +123,34 @@
 	{/for}
 
 {/let}
-
+	-->
 <script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
 <script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+	function stripQuotes(str) {
+		if (str.startsWith('"') || str.startsWith("'")) {
+			str = str.slice(1);
+		}
+		if (str.endsWith('"') || str.endsWith("'")) {
+			str = str.slice(0, -1);
+		}
+		return str;
+	}
+
+    function showDetails(jsonmessage) {
+		message = JSON.parse(stripQuotes(jsonmessage));
+
+		document.getElementById('subject').innerText = message.subject;
+		document.getElementById('message').innerText = message.content;
+		document.getElementById('priority').innerText = message.priority;
+		document.getElementById('startDate').innerText = message.startDate;
+		document.getElementById('endDate').innerText = message.endDate;
+		document.getElementById('lastUpdatedBy').innerText = message.lastUpdatedBy;
+		document.getElementById('lastUpdated').innerText = message.lastUpdated;
+		document.getElementById('createdBy').innerText = message.createdBy;
+		document.getElementById('createdAt').innerText = message.createdAt;
+    }
+</script>
 
 </body>
 </html>

@@ -5,6 +5,248 @@
 	<title>Landing Page - Editor</title>
 	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="/res/css/main.css">
+	<style>
+        .modal-dialog {
+            max-height: 80vh;
+        }
+        .modal-body {
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+	</style>
+</head>
+<body class="min-vh-100 vstack">
+{#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
+	<div class="container-fluid min-vh-100 d-flex flex-column">
+		<main id="content">
+            <div class="row">
+                <div class="col-6 justify-content-start">
+                    <h1 class="text-light align-middle">Landing Page - Editor</h1>
+                </div>
+                <div class="col-6 text-end">
+                    <a href="/" class="btn btn-primary btn-sm">Close</a>
+                </div>
+            </div>
+
+            <div id="message-table" class="table-container">
+				<table class="table table-striped table-hover opacity-75">
+					<thead>
+					<tr>
+						<th>Subject</th>
+						<th style="width:10%">Priority</th>
+						<th style="width:10%">Start Date</th>
+						<th style="width:10%">End Date</th>
+					</tr>
+					</thead>
+					<tbody>
+					{#if priorityMessages.isEmpty}
+						<tr>
+							<td colspan="4" class="text-center">
+								No Messages to edit!
+							</td>
+						</tr>
+					{#else}
+						{#for message in priorityMessages}
+							<tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#editModal" onclick="showDetails('{message.toJSON()}')">
+								<td>
+									{message.subject}
+								</td>
+								<td>
+									{message.priority}
+								</td>
+								<td>
+									{message.getFormattedStartDate()}
+								</td>
+								<td>
+									{message.getFormattedEndDate()}
+								</td>
+							</tr>
+						{/for}
+					{/if}
+					</tbody>
+				</table>
+			</div>
+		</main>
+	</div>
+
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Message Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3 row">
+                            <label for="subject" class="col-sm-3 col-form-label">Subject</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="subject" required>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="message" class="col-sm-3 col-form-label">Message</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="message" rows="5" required></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="priority" class="col-sm-3 col-form-label">Priority</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="priority" required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="startDate" class="col-sm-3 col-form-label">Start Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="startDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="endDate" class="col-sm-3 col-form-label">End Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="lastUpdatedBy" class="col-sm-3 col-form-label">Last Updated By</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="lastUpdatedBy" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="lastUpdated" class="col-sm-3 col-form-label">Last Updated</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="lastUpdated" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="createdBy" class="col-sm-3 col-form-label">Created By</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="createdBy" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="createdAt" class="col-sm-3 col-form-label">Created At</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="createdAt" readonly>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="saveMessage()">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="deleteMessage()">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--	
+	{#for message in priorityMessages}
+		<div class="modal fade" id="message-modal-{message.id}" tabindex="-1" aria-labelledby="message-modal-{message.id}-label" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="message-modal-{message.id}-label">{message.subject}</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{message.content}
+						<hr/>
+						<p class="h5">Start Date: {message.getFormattedStartDate()}</p>
+						<p class="h5">End Date: {message.getFormattedEndDate()}</p>
+						<p class="h5">Priority: {message.priority}</p>
+						<p class="h5">Last Updated By: {message.lastUpdatedBy}</p>
+						<p class="h5">Last Updated: {message.getFormattedLastUpdated()}</p>
+						<p class="h5">Created By: {message.createdBy}</p>
+						<p class="h5">Created At: {message.getFormattedCreatedAt()}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	{/for}
+
+{/let}
+	-->
+<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
+<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    var currentJSONMessage;
+
+	function stripQuotes(str) {
+		if (str.startsWith('"') || str.startsWith("'")) {
+			str = str.slice(1);
+		}
+		if (str.endsWith('"') || str.endsWith("'")) {
+			str = str.slice(0, -1);
+		}
+		return str;
+	}
+
+    function showDetails(jsonmessage) {
+        currentJSONMessage = jsonmessage;
+
+		message = JSON.parse(stripQuotes(jsonmessage));
+
+		document.getElementById('subject').value = message.subject;
+		document.getElementById('message').value = message.content;
+		document.getElementById('priority').value = message.priority;
+		document.getElementById('startDate').value = message.startDate;
+		document.getElementById('endDate').value = message.endDate;
+		document.getElementById('lastUpdatedBy').value = message.lastUpdatedBy;
+		document.getElementById('lastUpdated').value = message.lastUpdated;
+		document.getElementById('createdBy').value = message.createdBy;
+		document.getElementById('createdAt').value = message.createdAt;
+    }
+
+    function saveMessage() {
+		message = JSON.parse(stripQuotes(currentJSONMessage));
+
+        message.subject = document.getElementById('subject').value;
+		message.content = document.getElementById('message').value;
+        message.priority = document.getElementById('priority').value;
+        message.startDate = document.getElementById('startDate').value;
+        message.endDate = document.getElementById('endDate').value;
+        message.lastUpdatedBy = document.getElementById('lastUpdatedBy').value;
+        message.lastUpdated = document.getElementById('lastUpdated').value;
+        message.createdBy = document.getElementById('createdBy').value;
+        message.createdAt = document.getElementById('createdAt').value;
+
+        alert("Saving Pressed: " + JSON.stringify(message));
+
+        let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+        modal.hide();
+    }
+
+    function deleteMessage() {
+        if (confirm('Are you sure you want to delete this message?')) {
+            
+            let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            modal.hide();
+        }
+    }
+</script>
+
+</body>
+</html>
+
+<!--
+<!DOCTYPE html>
+<html lang="en_us">
+<head>
+	<meta charset="UTF-8">
+	<title>Landing Page - Editor</title>
+	<link rel="stylesheet" href="/res/lib/bootstrap/5.3.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/res/lib/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="/res/lib/jsgrid/1.5.3/jsgrid.min.css">
 	<link rel="stylesheet" href="/res/lib/jsgrid/1.5.3/jsgrid-theme.min.css">
 	<link rel="stylesheet" href="/res/lib/jquery-ui/1.14.1/jquery-ui.theme.min.css">
@@ -184,13 +426,21 @@
             return year + "-" + month + "-" + day;
         },
 
-        insertTemplate: function(value) {
-			let date = new Date(value);
-            return this._insertPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+        insertTemplate: function() {
+            alert("insertTemplate");
+            return this._insertPicker = $("<input>").datepicker({
+                format: 'YYYY-MM-DD'
+            });
+//            }).datepicker("setDate", new Date(value));
         },
 
         editTemplate: function(value) {
-            return this._editPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+            alert("editTemplate[value]: " + value);
+            //            return this._editPicker = $("<input>").datepicker().datepicker("setDate", new Date(value));
+
+            return this._editPicker = $("<input>").datepicker({
+                format: 'YYYY-MM-DD'
+            }).datepicker("setDate", new Date(value));
         },
 
         insertValue: function() {
@@ -199,6 +449,7 @@
 			let month = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(date);
 			let day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
 
+            alert("insertValue: " + year + "-" + month + "-" + day);
             return year + "-" + month + "-" + day;
         },
 
@@ -208,6 +459,7 @@
 			let month = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(date);
 			let day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
 
+            alert("editValue: " + year + "-" + month + "-" + day);
             return year + "-" + month + "-" + day;
         }
     });
@@ -386,3 +638,4 @@
 
 </body>
 </html>
+-->

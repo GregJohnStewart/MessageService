@@ -93,4 +93,25 @@ public class PriorityMessage extends PanacheEntityBase {
     public String getFormattedLastUpdated() {
         return dateTimeFormatter.format(lastUpdated);
     }
+
+    /**
+     * Messy toJSON method...use a library?
+     * @return JSON formatted message
+     */
+    public String toJSON() {
+        String json = "{";
+        json += "\"id\":\"" + id + "\",";
+        json += "\"subject\":\"" + subject + "\",";
+        json += "\"priority\":\"" + priority + "\",";
+        json += "\"startDate\":\"" + getFormattedStartDate() + "\",";
+        json += "\"endDate\":\"" + getFormattedEndDate() + "\",";
+        json += "\"createdBy\":\"" + createdBy + "\",";
+        json += "\"createdAt\":\"" + getFormattedCreatedAt() + "\",";
+        json += "\"lastUpdatedBy\":\"" + lastUpdatedBy + "\",";
+        json += "\"lastUpdated\":\"" + getFormattedLastUpdated() + "\",";
+        json += "\"content\":\"" + content + "\"";
+        json += "}";
+
+        return json;
+    }
 }
