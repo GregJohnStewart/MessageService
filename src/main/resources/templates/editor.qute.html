@@ -19,7 +19,9 @@
                 {#for timezone in timezones}
             <div class="card" id="card-{timezone.identifier}">
                 <div class="card-content">
-                    <button class="close-btn" id="{timezone.identifier}">X</button>
+                    <button type="button" class="close-btn" id="{timezone.identifier}">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                     <h3 class="card-title">{timezone.identifier}</h3>
                     <p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
                 </div>
