@@ -74,15 +74,21 @@ body {
     padding: 10px 0;
 }
 .card-title {
-    font-size: 1.2em;
+    font-size: 1.5em;
     margin: 0;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-align: center;
 }
 .card-description {
+	/*
     font-size: 0.9em;
     color: #666;
+	*/
     text-align: center;
+	font-size: 1.2rem;     /* Increase font size */
+    font-weight: 600;      /* Make the text bolder */
+    color: #333;           /* Darker color for better contrast */
+    margin-top: 5px;
 }
 
 #selectText {

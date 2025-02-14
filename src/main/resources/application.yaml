@@ -40,9 +40,10 @@ quarkus:
         secret: secret
   timezones:
     identifiers:
-    - "America/New York"
-    - "Asia/Kuwait"
-    - "Asia/Pyongyang"
+    - "US/Pacific"
+    - "US/Central"
+    - "US/Eastern"
+    - "GMT"
   linkCategories:
     categories:
     - categoryName: Search
