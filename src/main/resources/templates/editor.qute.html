@@ -11,6 +11,38 @@
     </head>
     <body class="min-vh-100 vstack">
     {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
+        <!-- Notification Container -->
+        <div id="notification-container"></div>
+    
+        <div class="card-container">
+            {#let timezones = cdi:TimezoneRepository.getTimezonesToDisplay()}
+                {#for timezone in timezones}
+            <div class="card" id="card-{timezone.identifier}">
+                <div class="card-content">
+                    <button class="close-btn" id="{timezone.identifier}">X</button>
+                    <h3 class="card-title">{timezone.identifier}</h3>
+                    <p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
+                </div>
+            </div>
+                {/for}
+            {/let}
+            {#let allZones = cdi:TimezoneRepository.getAllZoneIds()}
+            <div class="card" id="add-card">
+                <div class="card-content">
+                    <h3 class="card-title">Add Timezone</h3>
+                    <select id="selectText" name="selectText" onchange="addZone(this)">
+                        {#for zone in allZones}
+                        <option value="{zone}" data-offset="{cdi:TimezoneRepository.getSingleOffset(zone)}">{zone}</option>
+                        {/for}
+                    </select>
+                </div>
+            </div>
+        </div>
+                
+        {#for zone in allZones}
+        {/for}
+    {/let}
+
         <div class="container-fluid min-vh-100 d-flex flex-column">
             <main id="content">
                 <div class="row">
@@ -25,7 +57,7 @@
                 <div id="message-table" class="table-container">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h2 class="text-light  mb-0">Messages</h2>
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" onclick="showDetails('create', '')" title="Create New Message">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" onclick="showEditDetails('create', '')" title="Create New Message">
                             <i class="bi bi-plus"></i>
                         </button>
                     </div>
@@ -47,7 +79,7 @@
                             </tr>
                         {#else}
                             {#for message in priorityMessages}
-                                <tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#editModal" data-message-data="{message.toJSON()}" onclick="showDetails('update', '{message.id}')">
+                                <tr id="message-row-{message.id}" data-bs-toggle="modal" data-bs-target="#editModal" data-message-data="{message.toJSON()}" onclick="showEditDetails('update', '{message.id}')">
                                     <td>
                                         {message.subject}
                                     </td>
@@ -69,7 +101,8 @@
             </main>
         </div>
 
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+         <!-- Edit Message Modal -->
+         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -79,19 +112,19 @@
                     <div class="modal-body">
                         <form id="message-form" novalidate>
                             <div class="mb-3 row">
-                                <label for="subject" class="col-sm-3 col-form-label">Subject</label>
+                                <label for="subject" class="col-sm-3 col-form-label fw-bold">Subject</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="subject" name="subject" required>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="message" class="col-sm-3 col-form-label">Message</label>
+                                <label for="message" class="col-sm-3 col-form-label fw-bold">Message</label>
                                 <div class="col-sm-9">
                                     <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="priority" class="col-sm-3 col-form-label">Priority</label>
+                                <label for="priority" class="col-sm-3 col-form-label fw-bold">Priority</label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="priority" name="priority" required>
                                         <option value="1">1</option>
@@ -103,38 +136,38 @@
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="startDate" class="col-sm-3 col-form-label">Start Date</label>
+                                <label for="startDate" class="col-sm-3 col-form-label fw-bold">Start Date</label>
                                 <div class="col-sm-9">
                                     <input type="date" class="form-control" id="startDate" name="startDate" required>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="endDate" class="col-sm-3 col-form-label">End Date</label>
+                                <label for="endDate" class="col-sm-3 col-form-label fw-bold">End Date</label>
                                 <div class="col-sm-9">
                                     <input type="date" class="form-control" id="endDate" name="endDate" required>
                                 </div>
                             </div>
                             <!-- Readonly fields do not require validation -->
                             <div class="mb-3 row">
-                                <label for="lastUpdatedBy" class="col-sm-3 col-form-label">Last Updated By</label>
+                                <label for="lastUpdatedBy" class="col-sm-3 col-form-label fw-bold">Last Updated By</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="lastUpdatedBy" name="lastUpdatedBy" readonly>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="lastUpdated" class="col-sm-3 col-form-label">Last Updated</label>
+                                <label for="lastUpdated" class="col-sm-3 col-form-label fw-bold">Last Updated</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="lastUpdated" name="lastUpdated" readonly>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="createdBy" class="col-sm-3 col-form-label">Created By</label>
+                                <label for="createdBy" class="col-sm-3 col-form-label fw-bold">Created By</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="createdBy" name="createdBy" readonly>
                                 </div>
                             </div>
                             <div class="mb-3 row">
-                                <label for="createdAt" class="col-sm-3 col-form-label">Created At</label>
+                                <label for="createdAt" class="col-sm-3 col-form-label fw-bold">Created At</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" id="createdAt" name="createdAt" readonly>
                                 </div>
@@ -150,202 +183,31 @@
             </div>
         </div>
 
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete the message:
+                        <strong id="confirmDeleteMessageSubject"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
         <script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
         <script src="/res/lib/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+        <script src="/res/js/landpage.js"></script>
         <script>
-            var currentMessage;
-            var currentDialogType;
-
-            function stripQuotes(str) {
-                if (str.startsWith('"') || str.startsWith("'")) {
-                    str = str.slice(1);
-                }
-                if (str.endsWith('"') || str.endsWith("'")) {
-                    str = str.slice(0, -1);
-                }
-                return str;
-            }
-
-            function showDetails(dialogType, messageId) {
-                let jsonmessage;
-
-                currentDialogType = dialogType;
-                if(dialogType == 'create') {
-                    console.log("dialogType: " + dialogType);
-
-                    jsonmessage = '{"id":"","subject":"","priority":"1","startDate":"","endDate":"","createdBy":"","createdAt":"","lastUpdatedBy":"","lastUpdated":"","content":""}';
-                    console.log("Create JSON Message: " + jsonmessage);
-                } else {
-                    console.log("dialogType: " + dialogType);
-
-                    jsonmessage = document.getElementById('message-row-' + messageId).dataset.messageData;
-                    console.log("Update JSON Message: " + jsonmessage);
-                }
-
-                currentMessage = JSON.parse(jsonmessage);
-
-                document.getElementById('subject').value = currentMessage.subject;
-                document.getElementById('message').value = currentMessage.content;
-                document.getElementById('priority').value = currentMessage.priority;
-                document.getElementById('startDate').value = currentMessage.startDate;
-                document.getElementById('endDate').value = currentMessage.endDate;
-                document.getElementById('lastUpdatedBy').value = currentMessage.lastUpdatedBy;
-                document.getElementById('lastUpdated').value = currentMessage.lastUpdated;
-                document.getElementById('createdBy').value = currentMessage.createdBy;
-                document.getElementById('createdAt').value = currentMessage.createdAt;
-            }
-
-            function saveMessage() {
-                currentMessage.subject = document.getElementById('subject').value;
-                currentMessage.content = document.getElementById('message').value;
-                currentMessage.priority = document.getElementById('priority').value;
-                currentMessage.startDate = document.getElementById('startDate').value;
-                currentMessage.endDate = document.getElementById('endDate').value;
-                currentMessage.lastUpdatedBy = document.getElementById('lastUpdatedBy').value;
-                currentMessage.lastUpdated = document.getElementById('lastUpdated').value;
-                currentMessage.createdBy = document.getElementById('createdBy').value;
-                currentMessage.createdAt = document.getElementById('createdAt').value;
-
-                if(currentDialogType == 'create') {
-                    insertMessage(currentMessage);
-                } else {
-                    updateMessage(currentMessage);
-                }
-            }
-
-            function refreshTable() {
-                $.ajax({
-                    url: '/api/landpage/messages-table', // REST endpoint returns rendered HTML fragment
-                    type: 'GET',
-                    dataType: 'html',
-                    success: function(htmlFragment) {
-                        // Replace the table body content with the new HTML fragment
-                        $('#message-table table tbody').html(htmlFragment);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error refreshing table:', error);
-                    }
-                });
-            }
-
-            function insertMessage(message) {
-                $.ajax({
-                    url: '/api/landpage/message',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(message),
-                    success: function(response) {
-                        console.log('Message saved successfully:', response);
-
-                        refreshTable(); // Refresh the table with updated data
-
-                        // Hide the modal after a successful save
-                        let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                        modal.hide();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error saving message:', error);
-                        alert('Error saving message: ' + error);
-                    }
-                });
-            }
-
-            function updateMessage(message) {
-                // Send the updated message to the REST API
-                $.ajax({
-                    url: '/api/landpage/message/' + message.id,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify(message),
-                    success: function(response) {
-                        console.log('Message udpated successfully:', response);
-
-                        refreshTable(); // Refresh the table with updated data
-
-                        // Hide the modal after a successful save
-                        let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                        modal.hide();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error updating message:', error);
-                        alert('Error updating message: ' + error);
-                    }
-                });
-            }
-
-            function deleteMessage() {
-                if(currentDialogType == 'create') {
-                    // Ignore the delete button call.
-                    return;
-                }
-
-                if (confirm('Are you sure you want to delete the message:\n' + currentMessage.subject)) {
-                    // Send the delete message id to the REST API
-                    $.ajax({
-                        url: '/api/landpage/message/' + currentMessage.id,
-                        type: 'DELETE',
-                        success: function(response) {
-                            console.log('Message deleted successfully:', response);
-
-                            refreshTable(); // Refresh the table with updated data
-
-                            // Hide the modal after a successful save
-                            let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                            modal.hide();
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error deleting message:', error);
-                            alert('Error deleting message: ' + error);
-                        }
-                    });
-                }
-            }
-
-            // Initialize jQuery Validate on the form
-            $(document).ready(function() {
-                $("#message-form").validate({
-                    rules: {
-                    subject: {
-                        required: true,
-                        maxlength: 255
-                    },
-                    message: {
-                        required: true,
-                        maxlength: 1024
-                    },
-                    priority: "required",
-                    startDate: "required",
-                    endDate: "required"
-                    },
-                    messages: {
-                    subject: {
-                        required: "Please enter a subject",
-                        maxlength: "The subject must be no longer than 255 characters"
-                    },
-                    message: {
-                        required: "Please enter a message",
-                        maxlength: "The message must be no longer than 1024 characters"
-                    },
-                    priority: "Please select a priority",
-                    startDate: "Please select a start date",
-                    endDate: "Please select an end date"
-                    },
-                    errorClass: "is-invalid",
-                    validClass: "is-valid",
-                    errorElement: "div",
-                    errorPlacement: function(error, element) {
-                    error.addClass("invalid-feedback");
-                    error.insertAfter(element);
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                    $(element).addClass(errorClass).removeClass(validClass);
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass(errorClass).addClass(validClass);
-                    }
-                });
-            });
         </script>
 
     </body>

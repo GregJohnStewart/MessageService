@@ -36,7 +36,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     PriorityMessageRepository priorityMessageRepository;
 
     @Inject
-    Template messagestablefragment; // Injects the Qute template named "messages-table-fragment.html"
+    Template messagestablefragment; // Injects the Qute template named "messagestablefragment.html"
 
     @GET
     @Path("/message")

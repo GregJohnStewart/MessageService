@@ -38,5 +38,22 @@ quarkus:
       client-id: azide
       credentials:
         secret: secret
-      
-      
+  timezones:
+    identifiers:
+    - "America/New York"
+    - "Asia/Kuwait"
+    - "Asia/Pyongyang"
+  linkCategories:
+    categories:
+    - categoryName: Search
+      links:
+        - name: Google 1
+          address: http://google.com
+        - name: Google 2
+          address: http://yahoo.com
+    - categoryName: News
+      links:
+        - name: CNN
+          address: http://cnn.com
+        - name: Fox
+          address: http://foxnews.com

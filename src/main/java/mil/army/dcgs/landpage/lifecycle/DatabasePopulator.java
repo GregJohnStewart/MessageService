@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
 import mil.army.dcgs.landpage.database.PriorityMessageRepository;
+import mil.army.dcgs.landpage.database.TimezoneRepository;
 
 @Singleton
 public class DatabasePopulator {
@@ -13,11 +14,15 @@ public class DatabasePopulator {
 	@Inject
 	PriorityMessageRepository priorityMessageRepository;
 	
+	@Inject
+	TimezoneRepository timezoneRepository;
+
 	@Transactional
 	void onStart(
 		@Observes
 		StartupEvent ev
 	) {
 		this.priorityMessageRepository.populate();
+		this.timezoneRepository.populate();
 	}
 }

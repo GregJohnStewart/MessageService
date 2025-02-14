@@ -10,12 +10,49 @@
 	</style>
 </head>
 <body class="min-vh-100 vstack">
+<!-- Helpful Links Content -->
+{#if !helpfulLinks.isEmpty}
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 40px;">
+		<div class="container-fluid">
+			<div class="navbar-nav">
+				{#for category in helpfulLinks}
+				<div class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						{category.categoryName}
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+						{#for link in category.links}
+							<li><a class="dropdown-item" href="{link.address}">{link.name}</a></li>
+						{/for}
+					</ul>
+				</div>
+				{/for}
+			</div>
+		</div>
+	</nav>
+{/if}
+	
+<!-- Timezone Content -->
+{#let timezones = cdi:TimezoneRepository.getTimezonesToDisplay()}
+	<div class="card-container">
+		{#for timezone in timezones}
+			<div class="card">
+				<div class="card-content">
+					<h3 class="card-title">{timezone.identifier}</h3>
+					<p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
+				</div>
+			</div>
+		{/for}
+		</div>
+	{/let}
+
+<!-- Priority Message Content -->
 {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
 	<div class="container-fluid min-vh-100 d-flex flex-column">
 		<main id="content">
 			<div class="row mb-3 mt-1">
 				<div class="col-6">
-					<h1 class="text-light align-middle">Messages</h1>
+					<h2 class="text-light align-middle">Messages</h2>
 				</div>
 				{#if userLoggedIn}
 					<div class="col-6 text-end">
@@ -101,34 +138,9 @@
     </div>
 	<script src="/res/lib/jquery/3.7.1/jquery.min.js"></script>
 	<script src="/res/lib/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+	<script src="/res/lib/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+	<script src="/res/js/landpage.js"></script>
 	<script>
-		function stripQuotes(str) {
-			if (str.startsWith('"') || str.startsWith("'")) {
-				str = str.slice(1);
-			}
-			if (str.endsWith('"') || str.endsWith("'")) {
-				str = str.slice(0, -1);
-			}
-			return str;
-		}
-
-		function showDetails(messageId) {
-			jsonmessage = document.getElementById('message-row-' + messageId).dataset.messageData;
-
-			console.log("View JSON Message: " + jsonmessage);
-
-			message = JSON.parse(stripQuotes(jsonmessage));
-
-			document.getElementById('subject').innerText = message.subject;
-			document.getElementById('message').innerText = message.content;
-			document.getElementById('priority').innerText = message.priority;
-			document.getElementById('startDate').innerText = message.startDate;
-			document.getElementById('endDate').innerText = message.endDate;
-			document.getElementById('lastUpdatedBy').innerText = message.lastUpdatedBy;
-			document.getElementById('lastUpdated').innerText = message.lastUpdated;
-			document.getElementById('createdBy').innerText = message.createdBy;
-			document.getElementById('createdAt').innerText = message.createdAt;
-		}
 	</script>
 
 </body>
