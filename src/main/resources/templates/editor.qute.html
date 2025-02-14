@@ -9,7 +9,7 @@
         <style>
         </style>
     </head>
-    <body class="min-vh-100 vstack">
+    <body class="min-vh-100 vstack" onload="startUpdatingTimes()">
     {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
         <!-- Notification Container -->
         <div id="notification-container"></div>
