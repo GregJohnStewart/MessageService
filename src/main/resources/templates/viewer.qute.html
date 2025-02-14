@@ -13,7 +13,7 @@
 <!-- Helpful Links Content -->
 {#if !helpfulLinks.isEmpty}
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 40px;">
-		<div class="container-fluid">
+		<div class="container-fluid d-flex justify-content-between">
 			<div class="navbar-nav">
 				{#for category in helpfulLinks}
 				<div class="nav-item dropdown">
@@ -28,6 +28,9 @@
 				</div>
 				{/for}
 			</div>
+			{#if userLoggedIn}
+				<a href="/landpageManage" class="btn btn-primary btn-sm">Edit</a>
+			{/if}
 		</div>
 	</nav>
 {/if}
@@ -50,16 +53,6 @@
 {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
 	<div class="container-fluid min-vh-100 d-flex flex-column">
 		<main id="content">
-			<div class="row mb-3 mt-1">
-				<div class="col-6">
-					<h2 class="text-light align-middle">Messages</h2>
-				</div>
-				{#if userLoggedIn}
-					<div class="col-6 text-end">
-						<a href="/landpageManage" class="btn btn-primary btn-sm">Edit</a>
-					</div>
-				{/if}
-			</div>
 			<div id="message-table" class="table-container">
 				<table class="table table-striped table-hover opacity-75">
 					<thead>
