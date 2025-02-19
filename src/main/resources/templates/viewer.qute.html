@@ -9,7 +9,7 @@
 	<style>
 	</style>
 </head>
-<body class="min-vh-100 vstack" onload="startUpdatingTimes()">
+<body class="min-vh-100 vstack">
 <!-- Helpful Links Content -->
 {#if !helpfulLinks.isEmpty}
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 40px;">
@@ -41,8 +41,11 @@
 	{#for timezone in timezones}
 		<div class="card">
 			<div class="card-content">
-				<p class="card-title">{timezone.identifier}</p>
-				<p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
+				<div class="timezone-display" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}">
+                    <div class="timezone-time"></div>
+                    <div class="timezone-name">{timezone.identifier}</div>
+                    <div class="timezone-date"></div>
+                </div>
 			</div>
 		</div>
 	{/for}

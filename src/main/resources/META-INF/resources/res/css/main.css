@@ -33,13 +33,26 @@ body {
 	width: 300px;
 }
 
+@font-face {
+    font-family: 'digital-7';
+    src: url('/res/fonts/digital-7/digital-7 (mono).ttf') format('truetype'),
+         url('/res/fonts/digital-7/digital-7.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+@font-face {
+    font-family: 'enter-sansman';
+    src: url('/res/fonts/enter-sansman/entsans.ttf') format('truetype'),
+         url('/res/fonts/enter-sansman/entsani.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+    
 .card-container {
     display: flex;
     overflow-x: auto;
     padding: 20px 0;
-/*    gap: 20px; 
-    margin: 2rem auto;
-*/
 	justify-content: center;
     align-items: center;
     flex-wrap: wrap;
@@ -54,48 +67,23 @@ body {
     display: none;  /* Safari and Chrome */
 }
 
-.card {
-    min-width: 250px;
-    max-width: 250px;
-    height: 90px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    padding: 15px;
-    box-sizing: border-box;
-    flex-shrink: 0; /* Prevent cards from shrinking */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
 .card-content {
     flex-grow: 1;
-    padding: 10px 0;
+    padding: 0;
 }
 
 .card-title {
     font-size: 1.5em;
+    color: #0f0;                      /* Neon green text */
     margin: 0;
     margin-bottom: 5px;
     text-align: center;
 }
 
-.card-description {
-	/*
-    font-size: 0.9em;
-    color: #666;
-	*/
-    text-align: center;
-	font-size: 0.9rem;     /* Increase font size */
-    font-weight: 600;      /* Make the text bolder */
-    color: #333;           /* Darker color for better contrast */
-    margin-top: 5px;
-}
-
 #selectText {
-    width: 200px; 
+    display: block;
+    margin: 0 auto;
+    width: 125px; 
 }
 
 /* Style the close button */
@@ -106,8 +94,8 @@ body {
     background-color: #fff;
     border: none;
     border-radius: 50%;
-    width: 16px;  /* Half of the previous 32px */
-    height: 16px; /* Half of the previous 32px */
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,6 +110,58 @@ body {
 }
 
 .close-btn i {
-    font-size: 0.5rem;  /* Half of the previous 1rem */
+    font-size: 0.5rem;
     color: #dc3545;
+}
+
+/* Updated card style for a digital clock look */
+.card {
+    min-width: 150px;
+    max-width: 150px;
+    min-height: 120px;
+    max-height: 120px;
+    background-color: #000;           /* Dark background */
+    border: 2px solid rgb(100, 100, 100);           /* Neon green border */
+    border-radius: 8px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;        /* Center content vertically */
+    overflow: hidden;
+    box-shadow: 0 0 10px rgb(100, 100, 100);         /* Glow effect */
+}
+
+/* Updated timezone display styling */
+.timezone-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;            /* Center items horizontally */
+    justify-content: center;        /* Center items vertically */
+    text-align: center;             /* Center text inside each element */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.timezone-time,
+.timezone-name,
+.timezone-date {
+    margin: 0;                      /* remove margin between elements */
+    padding: 0;                     /* remove extra padding */
+}
+
+/* Optionally, adjust font sizes if needed for a more compact look */
+.timezone-time {
+    font-family: 'digital-7', monospace;
+    font-size: 2.75rem;
+    color: #0f0;
+/*    text-shadow: 0 0 10px #0f0; */
+}
+
+.timezone-name,
+.timezone-date {
+    font-family: 'enter-sansman', sans-serif;
+    font-size: 0.75rem;
+    color: #0f0;
 }

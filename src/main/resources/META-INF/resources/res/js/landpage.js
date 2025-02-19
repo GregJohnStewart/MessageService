@@ -7,41 +7,103 @@ function startUpdatingTimes() {
 }
 
 function updateAllTimes() {
-    document.querySelectorAll('p[data-offset]').forEach(element => {
-        const offset = element.getAttribute('data-offset');
-        updateSingleTime(element, offset);
+    // Now targeting the container with the updated display structure.
+    document.querySelectorAll('.timezone-display[data-offset]').forEach(container => {
+        const offset = container.getAttribute('data-offset');
+        updateSingleTime(container, offset);
     });
 }
 
-function updateSingleTime(element, utcOffset) {
+function updateSingleTime(container, utcOffset) {
     let offset = parseFloat(utcOffset);
 
     // Check if the offset is valid
     if (isNaN(offset)) {
-        element.textContent = `${element.textContent.split('(')[0]} (Invalid UTC offset)`;
+        container.innerHTML = `<div class="timezone-time">Invalid UTC offset</div>`;
         return;
     }
-    // Get current UTC time
+    // Get current UTC time and calculate local time based on the offset
     const now = new Date();
     const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-
-    // Calculate local time based on offset
     const localTime = new Date(utcTime + (3600000 * offset)); // 3600000 ms = 1 hour
 
-    // Format date as YYYY-MM-DD
-    const year = localTime.getFullYear();
-    const month = String(localTime.getMonth() + 1).padStart(2, '0');
-    const day = String(localTime.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-
-    // Format time as HH:MM:SS in military time
+    // Format time as HH:MM
     const hours = String(localTime.getHours()).padStart(2, '0');
     const minutes = String(localTime.getMinutes()).padStart(2, '0');
-    const seconds = String(localTime.getSeconds()).padStart(2, '0');
-    const timePart = `${hours}:${minutes}:${seconds}`;
+    const timeDisplay = `${hours}:${minutes}`;
 
-    // Update the text content with the calculated time
-    element.textContent = `${element.textContent.split('(')[0]} (${utcOffset}h): ${formattedDate} ${timePart}`;
+    // Format date as YYYY-MM-DD
+    const day = String(localTime.getDate()).padStart(2, '0');
+    const month = String(localTime.getMonth() + 1).padStart(2, '0');
+    const year = localTime.getFullYear();
+    const dateDisplay = `${year}-${month}-${day}`;
+
+    // Update the child elements of the container
+    const timeElem = container.querySelector('.timezone-time');
+    if (timeElem) {
+        timeElem.textContent = timeDisplay;
+    }
+    const dateElem = container.querySelector('.timezone-date');
+    if (dateElem) {
+        dateElem.textContent = dateDisplay;
+    }
+}
+
+function sortTimezoneCards() {
+    // Get the container holding all the timezone cards
+    const container = document.querySelector('.card-container');
+    if (!container) return;
+  
+    // Get an array of all timezone cards (exclude the "add-card")
+    const cards = Array.from(container.querySelectorAll('.card:not(#add-card)'));
+    
+    // Sort the cards by the numerical value of the offset
+    cards.sort((a, b) => {
+      const offsetA = parseFloat(a.querySelector('.timezone-display').getAttribute('data-offset'));
+      const offsetB = parseFloat(b.querySelector('.timezone-display').getAttribute('data-offset'));
+      return offsetB - offsetA;
+    });
+    
+    // Remove the sorted cards from the container
+    cards.forEach(card => card.remove());
+    
+    // Reinsert the sorted cards into the container (at the beginning)
+    cards.forEach(card => container.insertBefore(card, container.firstChild));
+    
+    // Finally, ensure the "add-card" is at the end
+    const addCard = document.getElementById('add-card');
+    if (addCard) {
+      addCard.remove();
+      container.appendChild(addCard);
+    }
+}
+  
+// Call this function after the timezone cards are rendered.
+// For example, in your onload handler:
+window.addEventListener('load', () => {
+    startUpdatingTimes();
+    updateTimezoneNames();
+    sortTimezoneCards();
+});
+  
+function formatTimezoneName(name) {
+
+    // Find the first forward slash
+    const slashIndex = name.lastIndexOf('/');
+    // If found, return the substring from the slash (inclusive) in upper case.
+    // Otherwise, return the full name in upper case.
+    const uppercaseName = slashIndex !== -1 ? name.slice(slashIndex + 1).toUpperCase() : name.toUpperCase();
+
+    // Replace underscores with spaces
+    const timezoneName = uppercaseName.replace(/_/g, ' ');
+
+    return timezoneName;
+}
+
+function updateTimezoneNames() {
+    document.querySelectorAll('.timezone-name').forEach(elem => {
+      elem.textContent = formatTimezoneName(elem.textContent);
+    });
 }
 
 // Cleanup when page is unloaded
@@ -58,23 +120,25 @@ function addDeleteEventListener(button) {
         .then(response => {
             if (response.ok) {
                 document.getElementById("card-" + button.getAttribute('id')).remove();
-                console.log('Button deleted successfully');
+                console.log('Timezone deleted successfully');
             } else {
-                console.error('Failed to delete button');
+                showNotification('Timezone not found', 'warning');
+                console.error('Timezone not found');
             }
         })
         .catch(error => {
-            console.error('Error:', error);
+            showNotification('Error deleting timezone: ' + error, 'danger');
+            console.error('Error deleting timezone:', error);
         });
     });
 }
 
-// Add event listeners to all of the 'delete' buttons on the timezone cards.
+// Attach delete event listeners to all of the 'delete' buttons on the timezone cards.
 document.querySelectorAll('.close-btn').forEach(button => {
     addDeleteEventListener(button);
 });
 
-// Add the selected timezone to database and reflect that change on the edit landpage editor.
+// Add the selected timezone to the database and reflect that change on the edit landpage editor.
 function addZone(selectElement) {
     let selectedValue = selectElement.value;
 
@@ -87,44 +151,50 @@ function addZone(selectElement) {
     })
     .then(response => {
         if (response.ok) {
-            console.log('POST request successful');
-
-            // Add the new HTML code to the page
+            // Add the new HTML code to the page with the updated display structure.
             let placeholder = document.getElementById('add-card');
             let newCard = document.createElement('div');
             newCard.className = 'card';
             newCard.id = 'card-' + selectedValue;
 
-            // Get the selected option
+            // Get the selected option and its UTC offset
             let selectedOption = selectElement.options[selectElement.selectedIndex];
             let offset = selectedOption.dataset.offset;
+            let formattedTimezoneName = formatTimezoneName(selectedValue);
 
             newCard.innerHTML = `
                 <div class="card-content">
-                    <button type="button" class="close-btn" id="{timezone.identifier}">
+                    <button type="button" class="close-btn" id="${selectedValue}">
                         <i class="bi bi-x-lg"></i>
                     </button>
-                    <h3 class="card-title">${selectedValue}</h3>
-                    <p class="card-description" data-offset="${offset}"></p>
+                    <div class="timezone-display" data-offset="${offset}">
+                        <div class="timezone-time"></div>
+                        <div class="timezone-name">${formattedTimezoneName}</div>
+                        <div class="timezone-date"></div>
+                    </div>
                 </div>
             `;
 
-            // Place new timezone card before the "Add Timezone" card.
+            // Place the new timezone card before the "Add Timezone" card.
             placeholder.parentNode.insertBefore(newCard, placeholder.previousSibling);
             addDeleteEventListener(document.getElementById(selectedValue));
 
-            // Force refresh css.
+            // Force a CSS reflow if needed.
             forceReflow();
+
+            sortTimezoneCards();
         } else {
-            console.error('Failed to send POST request');
+            showNotification('Timezone already exists', 'info');
+            console.error('Timezone already exists');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        showNotification('Error adding timezone: ' + error, 'danger');
+        console.error('Error adding timezone:', error);
     });
 }
 
-// Force the reload of css after the html is modified.
+// Force the reload of CSS after the HTML is modified.
 function forceReflow() {
     var body = document.body;
     // Adding and immediately removing a dummy style triggers reflow
@@ -152,8 +222,6 @@ function stripQuotes(str) {
 function showDetails(messageId) {
     const jsonmessage = document.getElementById('message-row-' + messageId).dataset.messageData;
 
-    console.log("View JSON Message: " + jsonmessage);
-
     const message = JSON.parse(stripQuotes(jsonmessage));
 
     document.getElementById('subject').innerText = message.subject;
@@ -168,7 +236,8 @@ function showDetails(messageId) {
 }
 
 function showNotification(message, type) {
-    // 'type' should be 'danger', 'success', etc.
+    // 'type' should be one of the following: 
+    // 'primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'
     var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
                     message +
                     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
@@ -188,13 +257,9 @@ function showEditDetails(dialogType, messageId) {
 
     currentDialogType = dialogType;
     if (dialogType == 'create') {
-        console.log("dialogType: " + dialogType);
         jsonmessage = '{"id":"","subject":"","priority":"1","startDate":"","endDate":"","createdBy":"","createdAt":"","lastUpdatedBy":"","lastUpdated":"","content":""}';
-        console.log("Create JSON Message: " + jsonmessage);
     } else {
-        console.log("dialogType: " + dialogType);
         jsonmessage = document.getElementById('message-row-' + messageId).dataset.messageData;
-        console.log("Update JSON Message: " + jsonmessage);
     }
 
     currentMessage = JSON.parse(jsonmessage);
@@ -240,7 +305,6 @@ function refreshTable() {
         document.querySelector('#message-table table tbody').innerHTML = htmlFragment;
     })
     .catch(error => {
-        console.error('Error refreshing table:', error);
         showNotification('Error refreshing table: ' + error, 'danger');
     });
 }
@@ -263,7 +327,7 @@ function insertMessage(message) {
         refreshTable(); // Refresh the table with updated data
         let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
         modal.hide();
-        console.log('Message saved successfully:', responseData);
+
         showNotification('Message saved successfully', 'success');
     })
     .catch(error => {
@@ -290,7 +354,7 @@ function updateMessage(message) {
         refreshTable(); // Refresh the table with updated data
         let modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
         modal.hide();
-        console.log('Message updated successfully:', responseData);
+
         showNotification('Message updated successfully', 'success');
     })
     .catch(error => {
@@ -322,12 +386,12 @@ function confirmDelete() {
         return response.text();
     })
     .then(responseData => {
-        console.log('Message deleted successfully:', responseData);
         refreshTable();
         let editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
         if (editModal) editModal.hide();
         let confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
         if (confirmModal) confirmModal.hide();
+
         showNotification('Message deleted successfully', 'success');
     })
     .catch(error => {

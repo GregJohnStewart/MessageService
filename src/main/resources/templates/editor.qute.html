@@ -9,7 +9,7 @@
         <style>
         </style>
     </head>
-    <body class="min-vh-100 vstack" onload="startUpdatingTimes()">
+    <body class="min-vh-100 vstack">
     {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}
         <!-- Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 40px;">
@@ -25,34 +25,34 @@
         <div class="card-container">
             {#let timezones = cdi:TimezoneRepository.getTimezonesToDisplay()}
                 {#for timezone in timezones}
-            <div class="card" id="card-{timezone.identifier}">
-                <div class="card-content">
-                    <button type="button" class="close-btn" id="{timezone.identifier}">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                    <h3 class="card-title">{timezone.identifier}</h3>
-                    <p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
-                </div>
-            </div>
+                    <div class="card" id="card-{timezone.identifier}">
+                        <div class="card-content">
+                            <button type="button" class="close-btn" id="{timezone.identifier}">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                            <div class="timezone-display" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}">
+                                <div class="timezone-time"></div>
+                                <div class="timezone-name">{timezone.identifier}</div>
+                                <div class="timezone-date"></div>
+                            </div>
+                        </div>
+                    </div>
                 {/for}
             {/let}
             {#let allZones = cdi:TimezoneRepository.getAllZoneIds()}
-            <div class="card" id="add-card">
-                <div class="card-content">
-                    <h3 class="card-title">Add Timezone</h3>
-                    <select id="selectText" name="selectText" onchange="addZone(this)">
-                        {#for zone in allZones}
-                        <option value="{zone}" data-offset="{cdi:TimezoneRepository.getSingleOffset(zone)}">{zone}</option>
-                        {/for}
-                    </select>
+                <div class="card" id="add-card">
+                    <div class="card-content">
+                        <h3 class="card-title">Add Timezone</h3>
+                        <select id="selectText" name="selectText" onchange="addZone(this)">
+                            {#for zone in allZones}
+                                <option value="{zone}" data-offset="{cdi:TimezoneRepository.getSingleOffset(zone)}">{zone}</option>
+                            {/for}
+                        </select>
+                    </div>
                 </div>
-            </div>
+            {/let}
         </div>
-                
-        {#for zone in allZones}
-        {/for}
-    {/let}
-
+        
         <div class="container-fluid min-vh-100 d-flex flex-column">
             <main id="content">
                 <div id="message-table" class="table-container">
