@@ -38,16 +38,16 @@
 <!-- Timezone Content -->
 {#let timezones = cdi:TimezoneRepository.getTimezonesToDisplay()}
 	<div class="card-container">
-		{#for timezone in timezones}
-			<div class="card">
-				<div class="card-content">
-					<h3 class="card-title">{timezone.identifier}</h3>
-					<p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
-				</div>
+	{#for timezone in timezones}
+		<div class="card">
+			<div class="card-content">
+				<p class="card-title">{timezone.identifier}</p>
+				<p class="card-description" data-offset="{cdi:TimezoneRepository.getSingleOffset(timezone.identifier)}"></p>
 			</div>
-		{/for}
 		</div>
-	{/let}
+	{/for}
+	</div>
+{/let}
 
 <!-- Priority Message Content -->
 {#let priorityMessages = cdi:PriorityMessageRepository.getMessagesToDisplay()}

@@ -49,6 +49,7 @@ body {
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
 }
+
 .card-container::-webkit-scrollbar {
     display: none;  /* Safari and Chrome */
 }
@@ -73,19 +74,21 @@ body {
     flex-grow: 1;
     padding: 10px 0;
 }
+
 .card-title {
     font-size: 1.5em;
     margin: 0;
     margin-bottom: 5px;
     text-align: center;
 }
+
 .card-description {
 	/*
     font-size: 0.9em;
     color: #666;
 	*/
     text-align: center;
-	font-size: 1.2rem;     /* Increase font size */
+	font-size: 0.9rem;     /* Increase font size */
     font-weight: 600;      /* Make the text bolder */
     color: #333;           /* Darker color for better contrast */
     margin-top: 5px;
@@ -94,6 +97,7 @@ body {
 #selectText {
     width: 200px; 
 }
+
 /* Style the close button */
 .close-btn {
     position: absolute;
