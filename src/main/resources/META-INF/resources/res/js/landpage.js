@@ -1,5 +1,9 @@
 let updateInterval;
 
+function openHelpfulLink(link) {
+    let newWindow = window.open(link, "_blank", "width=800,height=800");
+}
+
 function startUpdatingTimes() {
     updateAllTimes();
     // Update every 1 second (1000 milliseconds)

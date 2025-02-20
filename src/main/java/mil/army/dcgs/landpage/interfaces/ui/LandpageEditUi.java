@@ -15,7 +15,8 @@ import lombok.Getter;
 
 @RequestScoped
 @Path("/landpageManage")
-@Authenticated //TODO:: change to role
+@Authenticated
+//@RolesAllowed("dcgsa_admin")
 public class LandpageEditUi extends UiEndpoint {
 	
 	@Getter

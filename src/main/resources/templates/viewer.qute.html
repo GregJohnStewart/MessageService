@@ -22,13 +22,15 @@
 					</a>
 					<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
 						{#for link in category.links}
-							<li><a class="dropdown-item" href="{link.address}">{link.name}</a></li>
+							<li><a class="dropdown-item" href="javascript:openHelpfulLink('{link.address}')">{link.name}</a></li>
+							
 						{/for}
 					</ul>
 				</div>
 				{/for}
 			</div>
-			{#if userLoggedIn}
+
+			{#if (userLoggedIn && isdcgsaadmin)}
 				<a href="/landpageManage" class="btn btn-primary btn-sm">Edit</a>
 			{/if}
 		</div>

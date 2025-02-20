@@ -43,7 +43,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public @NotNull List<PriorityMessage> getAllMessages() {
-        List<PriorityMessage> output = priorityMessageRepository.listAll();
+        List<PriorityMessage> output = priorityMessageRepository.getMessagesToDisplay();
 
         return output;
     }
@@ -150,7 +150,7 @@ public class PriorityMessageEndpoints extends RestInterface {
     @Path("/messages-table")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getMessagesTable() {
-         List<PriorityMessage> messages = priorityMessageRepository.listAll();
+         List<PriorityMessage> messages = priorityMessageRepository.getMessagesToDisplay();
          return messagestablefragment.data("messages", messages);
     }
 }

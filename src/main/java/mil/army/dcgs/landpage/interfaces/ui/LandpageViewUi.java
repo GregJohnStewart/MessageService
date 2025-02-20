@@ -32,8 +32,15 @@ public class LandpageViewUi extends UiEndpoint {
 	@Produces(MediaType.TEXT_HTML)
 	@Transactional
 	public TemplateInstance get() {
+
+		// Determine if the logged in use has the dcgsa_admin role.
+		boolean isDcgsaAdmin = this.getAccessToken() != null && this.getAccessToken().getGroups() != null 
+            ? this.getAccessToken().getGroups().contains("dcgsa_admin") 
+            : false;
+
 		return this.getDefaultPageSetup()
 				   .data("userLoggedIn", this.getAccessToken().getRawToken() != null)
-				   .data("helpfulLinks", helpfulLinksConfig.categories());
+				   .data("helpfulLinks", helpfulLinksConfig.categories())
+				   .data("isdcgsaadmin", isDcgsaAdmin);
 	}
 }

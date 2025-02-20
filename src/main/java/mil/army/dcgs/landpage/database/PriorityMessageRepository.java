@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import mil.army.dcgs.landpage.config.PriorityMessageConfig;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @Slf4j
 @Named("PriorityMessageRepository")
@@ -41,7 +44,13 @@ public class PriorityMessageRepository implements PanacheRepository<PriorityMess
     }
     
     public List<PriorityMessage> getMessagesToDisplay(){
-        //TODO: filter/order based on dates
-        return this.findAll().stream().toList();
+        List<PriorityMessage> messages = this.findAll().stream().toList();
+
+        ArrayList<PriorityMessage> sortedMessages = new ArrayList<PriorityMessage>(messages);
+
+        Collections.sort(sortedMessages,
+            Comparator.comparing(PriorityMessage::getStartDate).thenComparingInt(PriorityMessage::getPriority));
+
+        return sortedMessages;
     }
 }
