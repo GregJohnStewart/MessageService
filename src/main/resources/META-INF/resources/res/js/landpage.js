@@ -372,6 +372,9 @@ function deleteMessage() {
     if (currentDialogType === 'create') {
         return;
     }
+    let editModal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+    if (editModal) editModal.hide();
+
     $('#confirmDeleteMessageSubject').text(currentMessage.subject);
 
     // Show the confirmation modal
